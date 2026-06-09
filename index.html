@@ -17,7 +17,10 @@
         .icon-gembok:hover { transform: scale(1.2); }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9998; }
-        .modal-content { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; color: white; box-sizing: border-box; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.100)); }
+        
+        /* Modifikasi: Dibuat lebih panjang ke atas dan bawah dengan max-height 85vh */
+        .modal-content { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; max-height: 85vh; overflow-y: auto; text-align: center; color: white; box-sizing: border-box; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.100)); }
+        
         #password-input { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 10px; color: white; width: 80%; margin-bottom: 15px; }
         .button-group { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
         .btn { padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
@@ -31,6 +34,17 @@
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; color: white; flex-direction: column; }
         #loading-bar { width: 200px; height: 5px; background: #555; border-radius: 5px; margin-top: 10px; overflow: hidden; }
         #progress { width: 0%; height: 100%; background: #4CAF50; transition: 0.3s; }
+        
+        #materi-list { 
+            color: white; 
+            margin: 15px 0; 
+            text-align: left; 
+            max-height: 50vh; /* Ditingkatkan agar area scroll lebih panjang */
+            overflow-y: auto;  
+            padding-right: 5px; 
+        }
+        #materi-list::-webkit-scrollbar { width: 5px; }
+        #materi-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -84,7 +98,7 @@
         </div>
         <div id="materi-view" style="display: none;">
             <h2 id="materi-title">Materi</h2>
-            <div id="materi-list" style="color: white; margin: 15px 0; text-align: left;"></div>
+            <div id="materi-list"></div>
             <button class="btn btn-batal" onclick="closeModal()">Tutup</button>
         </div>
     </div>
@@ -108,7 +122,6 @@
     const db = getDatabase(app);
     let tempDelete = null;
 
-    // Memastikan fungsi bisa diakses oleh onclick di HTML
     window.openModal = () => { document.getElementById("login-modal").style.display = "flex"; document.getElementById("overlay").style.display = "block"; }
     window.closeModal = () => { document.getElementById("login-modal").style.display = "none"; document.getElementById("overlay").style.display = "none"; document.getElementById("password-section").style.display = "block"; document.getElementById("data-section").style.display = "none"; document.getElementById("materi-view").style.display = "none"; document.getElementById("password-input").value = ""; }
     
