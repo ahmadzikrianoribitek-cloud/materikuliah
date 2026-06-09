@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS Anda Tetap Sama */
+        body { margin: 0; padding: 0; font-family: sans-serif; background-image: url("bg.png"); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .glass-card { width: 90%; max-width: 400px; min-height: 80vh; display: flex; flex-direction: column; padding: 20px; padding-top: 60px; background: transparent; border: none; box-shadow: none; box-sizing: border-box; position: relative; transition: filter 0.3s; }
+        .logo { width: 100px; margin-bottom: 20px; margin: 0 auto; padding: 15px; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.911)); transition: filter 0.3s ease; }
+        h1 { font-size: 20px; margin: 1px auto; text-transform: uppercase; letter-spacing: 1px; color: black; white-space: nowrap; text-align: center; font-weight: 1000; font-family: 'outfit'; text-shadow: 0px 4px 6px rgba(89, 86, 86, 0.847); }
+        p { font-size: 9px; opacity: 0.8; margin: 1px auto; color: black; white-space: nowrap; text-align: center; font-family: 'outfit'; }
+        .footer-text { font-size: 10px; color: #000000; text-align: center; margin-top: -4px; opacity: 0.6; font-style: italic; letter-spacing: 0.5px; background: transparent; }
+        .semester-list { width: 80%; margin: 20px auto; font-family: 'outfit'; display: flex; flex-direction: column; justify-content: space-between; list-style: none; padding: 0; margin-top: 20px; }
+        .semester-list li { background: linear-gradient(135deg, rgba(230, 230, 210, 0.108), rgba(248, 241, 241, 0.003)); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(160, 160, 76, 0.108); padding: 15px; margin: 10px 0; border-radius: 20px; text-align: center; color: black; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.364); cursor: pointer; }
+        .semester-list li:hover { background: rgba(255, 255, 255, 0.018); transform: scale(1.1); }
+        .icon-gembok { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; transition: 0.3s; }
+        .icon-gembok:hover { transform: scale(1.2); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9998; }
+        .modal-content { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; color: white; box-sizing: border-box; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.100)); }
+        #password-input { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 10px; color: white; width: 80%; margin-bottom: 15px; }
+        .button-group { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
+        .btn { padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-buka { background: rgba(76, 175, 80, 0.6); color: white; }
+        .btn-batal { background: rgba(244, 67, 54, 0.6); color: white; }
+        #data-section input, #data-section select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.1); color: whitesmoke; box-sizing: border-box; }
+        h2 { margin-top: 0; font-size: 1.5rem; color: white; }
+        .materi-item { background: rgba(0,0,0,0.2); padding: 10px; margin-bottom: 8px; border-radius: 10px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-lihat { background: rgba(76, 175, 80, 0.8); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .btn-hapus { background: transparent; border: none; cursor: pointer; font-size: 16px; }
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; color: white; flex-direction: column; }
+        #loading-bar { width: 200px; height: 5px; background: #555; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        #progress { width: 0%; height: 100%; background: #4CAF50; transition: 0.3s; }
+        .blur { filter: blur(-100px); }
+    </style>
+</head>
+<body>
+
+<div class="glass-card" id="main-card">
+    <img src="gembok.png" class="icon-gembok" onclick="openModal()" style="width: 30px;">
+    <img src="logo ibitek.png" class="logo">
+    <h1>RINGKASAN MATERI KULIAH</h1>
+    <p>INSTITUT BISNIS DAN TEKNOLOGI KALIMANTAN BANJARMASIN</p>
+    <ul class="semester-list" onclick="pilihSemester(event)">
+        <li data-smt="1">Materi Semester 1</li><li data-smt="2">Materi Semester 2</li>
+        <li data-smt="3">Materi Semester 3</li><li data-smt="4">Materi Semester 4</li>
+        <li data-smt="5">Materi Semester 5</li><li data-smt="6">Materi Semester 6</li>
+        <li data-smt="7">Materi Semester 7</li><li data-smt="8">Materi Semester 8</li>
+    </ul>
+    <div id="materi-container"><p class="footer-text">Dibuat oleh Ahmad Zikrianor</p></div>
+</div>
+
+<div id="loading-overlay">
+    <div>Menyimpan...</div>
+    <div id="loading-bar"><div id="progress"></div></div>
+</div>
+
+<div id="overlay" class="overlay"></div>
+
+<div id="login-modal" class="modal">
+    <div class="modal-content">
+        <div id="password-section">
+            <h2 id="pass-title">Masukkan Password</h2>
+            <input type="password" id="password-input" placeholder="Password...">
+            <div class="button-group">
+                <button class="btn btn-buka" onclick="checkPassword()">Buka</button>
+                <button class="btn btn-batal" onclick="closeModal()">Batal</button>
+            </div>
+        </div>
+        <div id="data-section" style="display: none;">
+            <h2>Input Data Materi</h2>
+            <select id="semester">
+                <option value="1">Semester 1</option><option value="2">Semester 2</option>
+                <option value="3">Semester 3</option><option value="4">Semester 4</option>
+                <option value="5">Semester 5</option><option value="6">Semester 6</option>
+                <option value="7">Semester 7</option><option value="8">Semester 8</option>
+            </select>
+            <input type="text" id="matkul" placeholder="Nama Mata Kuliah">
+            <input type="date" id="tanggal">
+            <input type="url" id="link-drive" placeholder="Link Google Drive">
+            <div class="button-group">
+                <button class="btn btn-buka" onclick="saveData()">Simpan</button>
+                <button class="btn btn-batal" onclick="closeModal()">Tutup</button>
+            </div>
+        </div>
+        <div id="materi-view" style="display: none;">
+            <h2 id="materi-title">Materi</h2>
+            <div id="materi-list" style="color: white; margin: 15px 0; text-align: left;"></div>
+            <button class="btn btn-batal" onclick="closeModal()">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let databaseMateri = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [] };
+    let tempDelete = null;
+
+    function openModal() { document.getElementById("login-modal").style.display = "flex"; document.getElementById("overlay").style.display = "block"; }
+    function closeModal() { document.getElementById("login-modal").style.display = "none"; document.getElementById("overlay").style.display = "none"; document.getElementById("password-section").style.display = "block"; document.getElementById("data-section").style.display = "none"; document.getElementById("materi-view").style.display = "none"; document.getElementById("password-input").value = ""; }
+    
+    function checkPassword() {
+        let pass = document.getElementById("password-input").value;
+        if (pass === "1234") {
+            if (tempDelete) {
+                databaseMateri[tempDelete.smt].splice(tempDelete.index, 1);
+                alert("Berhasil menghapus materi!");
+                tempDelete = null;
+                closeModal();
+            } else {
+                document.getElementById("password-section").style.display = "none";
+                document.getElementById("data-section").style.display = "block";
+            }
+        } else { alert("Password Salah!"); }
+    }
+
+    function saveData() {
+        let loadOverlay = document.getElementById("loading-overlay");
+        let prog = document.getElementById("progress");
+        loadOverlay.style.display = "flex";
+        prog.style.width = "100%";
+        
+        setTimeout(() => {
+            let smt = document.getElementById("semester").value;
+            databaseMateri[smt].push({
+                mk: document.getElementById("matkul").value,
+                tgl: document.getElementById("tanggal").value,
+                link: document.getElementById("link-drive").value
+            });
+            alert("Data Berhasil Disimpan!");
+            loadOverlay.style.display = "none";
+            prog.style.width = "0%";
+            // Kosongkan input
+            document.getElementById("matkul").value = "";
+            document.getElementById("tanggal").value = "";
+            document.getElementById("link-drive").value = "";
+        }, 1500);
+    }
+
+    function viewMateri(smt) {
+        document.getElementById("password-section").style.display = "none";
+        document.getElementById("data-section").style.display = "none";
+        document.getElementById("materi-view").style.display = "block";
+        document.getElementById("materi-title").innerText = "Semester " + smt;
+        let listDiv = document.getElementById("materi-list");
+        listDiv.innerHTML = "";
+        if (databaseMateri[smt].length === 0) listDiv.innerHTML = "Belum ada materi.";
+        else {
+            databaseMateri[smt].forEach((item, index) => {
+                listDiv.innerHTML += `
+                    <div class="materi-item">
+                        <div><strong>${item.mk}</strong><br><small>${item.tgl}</small></div>
+                        <div>
+                            <button class="btn-lihat" onclick="window.open('${item.link}', '_blank')">Lihat</button>
+                            <button class="btn-hapus" onclick="initHapus(${smt}, ${index})">🗑️</button>
+                        </div>
+                    </div>`;
+            });
+        }
+        openModal();
+    }
+
+    function initHapus(smt, index) {
+        tempDelete = {smt, index};
+        document.getElementById("materi-view").style.display = "none";
+        document.getElementById("password-section").style.display = "block";
+    }
+
+    function pilihSemester(event) { if (event.target.tagName === 'LI') viewMateri(event.target.getAttribute('data-smt')); }
+</script>
+
+</body>
+</html>
