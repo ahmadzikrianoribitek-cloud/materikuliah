@@ -2,23 +2,28 @@
 <html lang="id">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* CSS Anda Tetap Sama */
-        body { margin: 0; padding: 0; font-family: sans-serif; background-image: url("bg.png"); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        /* Pengaturan agar font konsisten di HP dan laptop */
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body { margin: 0; padding: 0; font-family: 'Outfit', sans-serif; background-image: url("bg.png"); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100vh; display: flex; justify-content: center; align-items: center; }
         .glass-card { width: 90%; max-width: 400px; min-height: 80vh; display: flex; flex-direction: column; padding: 20px; padding-top: -10px; background: transparent; border: none; box-shadow: none; box-sizing: border-box; position: relative; transition: filter 0.3s; }
         .logo { width: 100px; margin-bottom: 20px; margin: 0 auto; padding: 15px; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.911)); transition: filter 0.3s ease; }
-        h1 { font-size: 20px; margin: 1px auto; text-transform: uppercase; letter-spacing: 1px; color: black; white-space: nowrap; text-align: center; font-weight: 1000; font-family: 'outfit'; text-shadow: 0px 4px 6px rgba(89, 86, 86, 0.847); }
-        p { font-size: 10px; opacity: 0.8; margin: 1px auto; color: black; white-space: nowrap; text-align: center; font-family: 'outfit'; }
+        h1 { font-size: 20px; margin: 1px auto; text-transform: uppercase; letter-spacing: 1px; color: black; white-space: nowrap; text-align: center; font-weight: 1000; font-family: 'Outfit', sans-serif; text-shadow: 0px 4px 6px rgba(89, 86, 86, 0.847); }
+        p { font-size: 10px; opacity: 0.8; margin: 1px auto; color: black; white-space: nowrap; text-align: center; font-family: 'Outfit', sans-serif; }
         .footer-text { font-size: 10px; color: #000000; text-align: center; margin-top: -4px; opacity: 0.6; font-style: italic; letter-spacing: 0.5px; background: transparent; }
-        .semester-list { width: 80%; margin: 20px auto; font-family: 'outfit'; display: flex; flex-direction: column; justify-content: space-between; list-style: none; padding: 0; margin-top: 20px; }
-        .semester-list li { background: linear-gradient(135deg, rgba(230, 230, 210, 0.108), rgba(248, 241, 241, 0.003)); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(160, 160, 76, 0.108); padding: 15px; margin: 10px 0; border-radius: 20px; text-align: center; color: black; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.364); cursor: pointer; font-size: 10px;}
+        .semester-list { width: 80%; margin: 20px auto; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; justify-content: space-between; list-style: none; padding: 0; margin-top: 20px; }
+        .semester-list li { background: linear-gradient(135deg, rgba(230, 230, 210, 0.108), rgba(248, 241, 241, 0.003)); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(160, 160, 76, 0.108); padding: 15px; margin: 10px 0; border-radius: 20px; text-align: center; color: black; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.364); cursor: pointer; font-size: 14px;}
         .semester-list li:hover { background: rgba(255, 255, 255, 0.018); transform: scale(1.1); }
         .icon-gembok { position: absolute; top: 30px; right: 20px; font-size: 24px; cursor: pointer; transition: 0.3s; }
         .icon-gembok:hover { transform: scale(1.2); }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9998; }
         
-        /* Modifikasi: Dibuat lebih panjang ke atas dan bawah dengan max-height 85vh */
         .modal-content { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; max-height: 85vh; overflow-y: auto; text-align: center; color: white; box-sizing: border-box; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.100)); }
         
         #password-input { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 10px; color: white; width: 80%; margin-bottom: 15px; }
@@ -39,7 +44,7 @@
             color: white; 
             margin: 15px 0; 
             text-align: left; 
-            max-height: 50vh; /* Ditingkatkan agar area scroll lebih panjang */
+            max-height: 50vh; 
             overflow-y: auto;  
             padding-right: 5px; 
         }
