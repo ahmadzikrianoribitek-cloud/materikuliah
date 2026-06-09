@@ -10,8 +10,40 @@
             text-size-adjust: 100%;
         }
 
-        body { margin: 0; padding: 0; font-family: 'Outfit', sans-serif; background-image: url("bg.png"); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .glass-card { width: 90%; max-width: 400px; min-height: 80vh; display: flex; flex-direction: column; padding: 20px; padding-top: -10px; background: transparent; border: none; box-shadow: none; box-sizing: border-box; position: relative; transition: filter 0.3s; }
+        /* REVISI: Menggunakan 100dvh dan overflow hidden agar pas di layar HP */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Outfit', sans-serif; 
+            background-image: url("bg.png"); 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            height: 100dvh; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        /* REVISI: Mengubah justify-content menjadi flex-start dan batasi tinggi */
+        .glass-card { 
+            width: 90%; 
+            max-width: 400px; 
+            max-height: 95dvh; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 20px; 
+            padding-top: 20px; 
+            background: transparent; 
+            border: none; 
+            box-shadow: none; 
+            box-sizing: border-box; 
+            position: relative; 
+            transition: filter 0.3s; 
+            justify-content: flex-start; 
+        }
+        
         .logo { width: 100px; margin-bottom: 20px; margin: 0 auto; padding: 15px; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.911)); transition: filter 0.3s ease; }
         h1 { font-size: 20px; margin: 1px auto; text-transform: uppercase; letter-spacing: 1px; color: black; white-space: nowrap; text-align: center; font-weight: 1000; font-family: 'Outfit', sans-serif; text-shadow: 0px 4px 6px rgba(89, 86, 86, 0.847); }
         p { font-size: 10px; opacity: 0.8; margin: 1px auto; color: black; white-space: nowrap; text-align: center; font-family: 'Outfit', sans-serif; }
