@@ -31,7 +31,6 @@
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; color: white; flex-direction: column; }
         #loading-bar { width: 200px; height: 5px; background: #555; border-radius: 5px; margin-top: 10px; overflow: hidden; }
         #progress { width: 0%; height: 100%; background: #4CAF50; transition: 0.3s; }
-        .blur { filter: blur(-100px); }
     </style>
 </head>
 <body>
@@ -91,21 +90,36 @@
     </div>
 </div>
 
-<script>
-    let databaseMateri = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [] };
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyARF88zhkjygBeRErfVkXhrkMVKZh8KTdw",
+        authDomain: "materi-kuliah-574a7.firebaseapp.com",
+        databaseURL: "https://materi-kuliah-574a7-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "materi-kuliah-574a7",
+        storageBucket: "materi-kuliah-574a7.firebasestorage.app",
+        messagingSenderId: "292121429363",
+        appId: "1:292121429363:web:205be154df903cde35b106"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
     let tempDelete = null;
 
-    function openModal() { document.getElementById("login-modal").style.display = "flex"; document.getElementById("overlay").style.display = "block"; }
-    function closeModal() { document.getElementById("login-modal").style.display = "none"; document.getElementById("overlay").style.display = "none"; document.getElementById("password-section").style.display = "block"; document.getElementById("data-section").style.display = "none"; document.getElementById("materi-view").style.display = "none"; document.getElementById("password-input").value = ""; }
+    // Memastikan fungsi bisa diakses oleh onclick di HTML
+    window.openModal = () => { document.getElementById("login-modal").style.display = "flex"; document.getElementById("overlay").style.display = "block"; }
+    window.closeModal = () => { document.getElementById("login-modal").style.display = "none"; document.getElementById("overlay").style.display = "none"; document.getElementById("password-section").style.display = "block"; document.getElementById("data-section").style.display = "none"; document.getElementById("materi-view").style.display = "none"; document.getElementById("password-input").value = ""; }
     
-    function checkPassword() {
+    window.checkPassword = () => {
         let pass = document.getElementById("password-input").value;
         if (pass === "1234") {
             if (tempDelete) {
-                databaseMateri[tempDelete.smt].splice(tempDelete.index, 1);
+                remove(ref(db, 'materi/' + tempDelete.smt + '/' + tempDelete.id));
                 alert("Berhasil menghapus materi!");
                 tempDelete = null;
-                closeModal();
+                window.closeModal();
             } else {
                 document.getElementById("password-section").style.display = "none";
                 document.getElementById("data-section").style.display = "block";
@@ -113,59 +127,62 @@
         } else { alert("Password Salah!"); }
     }
 
-    function saveData() {
+    window.saveData = () => {
         let loadOverlay = document.getElementById("loading-overlay");
         let prog = document.getElementById("progress");
         loadOverlay.style.display = "flex";
         prog.style.width = "100%";
         
-        setTimeout(() => {
-            let smt = document.getElementById("semester").value;
-            databaseMateri[smt].push({
-                mk: document.getElementById("matkul").value,
-                tgl: document.getElementById("tanggal").value,
-                link: document.getElementById("link-drive").value
-            });
+        let smt = document.getElementById("semester").value;
+        push(ref(db, 'materi/' + smt), {
+            mk: document.getElementById("matkul").value,
+            tgl: document.getElementById("tanggal").value,
+            link: document.getElementById("link-drive").value
+        }).then(() => {
             alert("Data Berhasil Disimpan!");
             loadOverlay.style.display = "none";
             prog.style.width = "0%";
-            // Kosongkan input
             document.getElementById("matkul").value = "";
             document.getElementById("tanggal").value = "";
             document.getElementById("link-drive").value = "";
-        }, 1500);
+        });
     }
 
-    function viewMateri(smt) {
+    window.viewMateri = (smt) => {
         document.getElementById("password-section").style.display = "none";
         document.getElementById("data-section").style.display = "none";
         document.getElementById("materi-view").style.display = "block";
         document.getElementById("materi-title").innerText = "Semester " + smt;
         let listDiv = document.getElementById("materi-list");
-        listDiv.innerHTML = "";
-        if (databaseMateri[smt].length === 0) listDiv.innerHTML = "Belum ada materi.";
-        else {
-            databaseMateri[smt].forEach((item, index) => {
-                listDiv.innerHTML += `
-                    <div class="materi-item">
-                        <div><strong>${item.mk}</strong><br><small>${item.tgl}</small></div>
-                        <div>
-                            <button class="btn-lihat" onclick="window.open('${item.link}', '_blank')">Lihat</button>
-                            <button class="btn-hapus" onclick="initHapus(${smt}, ${index})">🗑️</button>
-                        </div>
-                    </div>`;
-            });
-        }
-        openModal();
+        listDiv.innerHTML = "Memuat...";
+
+        onValue(ref(db, 'materi/' + smt), (snapshot) => {
+            listDiv.innerHTML = "";
+            const data = snapshot.val();
+            if (!data) { listDiv.innerHTML = "Belum ada materi."; }
+            else {
+                for (let id in data) {
+                    listDiv.innerHTML += `
+                        <div class="materi-item">
+                            <div><strong>${data[id].mk}</strong><br><small>${data[id].tgl}</small></div>
+                            <div>
+                                <button class="btn-lihat" onclick="window.open('${data[id].link}', '_blank')">Lihat</button>
+                                <button class="btn-hapus" onclick="window.initHapus('${smt}', '${id}')">🗑️</button>
+                            </div>
+                        </div>`;
+                }
+            }
+        });
+        window.openModal();
     }
 
-    function initHapus(smt, index) {
-        tempDelete = {smt, index};
+    window.initHapus = (smt, id) => {
+        tempDelete = {smt, id};
         document.getElementById("materi-view").style.display = "none";
         document.getElementById("password-section").style.display = "block";
     }
 
-    function pilihSemester(event) { if (event.target.tagName === 'LI') viewMateri(event.target.getAttribute('data-smt')); }
+    window.pilihSemester = (event) => { if (event.target.tagName === 'LI') window.viewMateri(event.target.getAttribute('data-smt')); }
 </script>
 
 </body>
