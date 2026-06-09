@@ -10,7 +10,7 @@
             text-size-adjust: 100%;
         }
 
-        /* REVISI: Menggunakan 100dvh dan overflow hidden agar pas di layar HP */
+        /* REVISI: Mengunci layar agar tidak bisa digeser (scrolling) */
         body { 
             margin: 0; 
             padding: 0; 
@@ -26,7 +26,7 @@
             align-items: center; 
         }
         
-        /* REVISI: Mengubah justify-content menjadi flex-start dan batasi tinggi */
+        /* REVISI: Menggunakan dvh agar pas di layar */
         .glass-card { 
             width: 90%; 
             max-width: 400px; 
@@ -76,7 +76,7 @@
             color: white; 
             margin: 15px 0; 
             text-align: left; 
-            max-height: 50vh; 
+            max-height: 50dvh; /* List materi tetap bisa discroll di dalam area modal */
             overflow-y: auto;  
             padding-right: 5px; 
         }
