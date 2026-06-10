@@ -113,19 +113,26 @@
     const db = getDatabase(app);
     let tempAction = null;
 
-    document.getElementById("materi-isi").addEventListener("paste", (e) => {
-        const item = e.clipboardData.items[0];
-        if (item && item.type.startsWith("image")) {
-            const file = item.getAsFile();
+    // Menangani Paste Gambar agar menjadi kode base64 di textarea
+    const handlePaste = (e) => {
+        const item = (e.clipboardData || window.clipboardData).items[0];
+        if (item && item.type.indexOf("image") !== -1) {
+            const blob = item.getAsFile();
             const reader = new FileReader();
             reader.onload = (event) => {
-                const imgTag = `\n<img src="${event.target.result}" />\n`;
+                const imgBase64 = event.target.result;
                 const textarea = document.getElementById("materi-isi");
-                textarea.value += imgTag;
+                const text = textarea.value;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                textarea.value = text.slice(0, start) + `<img src="${imgBase64}" />` + text.slice(end);
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(blob);
+            e.preventDefault();
         }
-    });
+    };
+
+    document.getElementById("materi-isi").addEventListener("paste", handlePaste);
 
     window.openModal = () => { document.getElementById("login-modal").style.display = "flex"; document.getElementById("overlay").style.display = "block"; }
     
@@ -190,15 +197,11 @@
         set(refPath, { mk, tgl, isi }).then(() => {
             alert("Data Berhasil Disimpan!"); 
             loadOverlay.style.display = "none";
-            
             document.getElementById("matkul").value = "";
             document.getElementById("tanggal").value = "";
             document.getElementById("materi-isi").value = "";
             document.getElementById("edit-id").value = "";
-
-            if(id) {
-                window.viewMateri(smt);
-            }
+            if(id) { window.viewMateri(smt); }
         });
     }
 
@@ -241,7 +244,6 @@
         let listDiv = document.getElementById("materi-list"); 
         listDiv.style.display = "block";
         listDiv.innerHTML = "Memuat...";
-        
         onValue(ref(db, 'materi/' + smt), (snapshot) => {
             listDiv.innerHTML = ""; 
             const data = snapshot.val();
