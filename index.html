@@ -76,7 +76,7 @@
             color: white; 
             margin: 15px 0; 
             text-align: left; 
-            max-height: 50dvh; /* List materi tetap bisa discroll di dalam area modal */
+            max-height: 50dvh; 
             overflow-y: auto;  
             padding-right: 5px; 
         }
@@ -211,16 +211,23 @@
             const data = snapshot.val();
             if (!data) { listDiv.innerHTML = "Belum ada materi."; }
             else {
-                for (let id in data) {
+                // Konversi objek menjadi array untuk bisa diurutkan
+                let dataArray = Object.keys(data).map(id => ({ id, ...data[id] }));
+                
+                // Urutkan berdasarkan tanggal (terbaru ke terlama)
+                dataArray.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+
+                // Tampilkan data yang sudah urut
+                dataArray.forEach(item => {
                     listDiv.innerHTML += `
                         <div class="materi-item">
-                            <div><strong>${data[id].mk}</strong><br><small>${data[id].tgl}</small></div>
+                            <div><strong>${item.mk}</strong><br><small>${item.tgl}</small></div>
                             <div>
-                                <button class="btn-lihat" onclick="window.open('${data[id].link}', '_blank')">Lihat</button>
-                                <button class="btn-hapus" onclick="window.initHapus('${smt}', '${id}')">🗑️</button>
+                                <button class="btn-lihat" onclick="window.open('${item.link}', '_blank')">Lihat</button>
+                                <button class="btn-hapus" onclick="window.initHapus('${smt}', '${item.id}')">🗑️</button>
                             </div>
                         </div>`;
-                }
+                });
             }
         });
         window.openModal();
