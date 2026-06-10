@@ -20,7 +20,6 @@
             align-items: center;
         }
 
-        /* WADAH BARU: Menjaga semua elemen di tengah dan bisa scroll jika layar pendek */
         .page-wrapper {
             width: 100%;
             height: 100%;
@@ -44,10 +43,10 @@
             box-sizing: border-box; 
             position: relative; 
             transition: filter 0.3s; 
-            justify-content: center; /* Elemen di tengah vertikal */
+            justify-content: center;
         }
         
-        .logo { width: 100px; margin: 0 auto 20px auto; display: block; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.911)); }
+        .logo { width: 100px; margin: 0 auto 20px auto; display: block; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.911)); will-change: transform; backface-visibility: hidden; }
         h1 { font-size: 20px; margin: 1px auto; text-transform: uppercase; letter-spacing: 1px; color: black; text-align: center; font-weight: 1000; font-family: 'Outfit', sans-serif; text-shadow: 0px 4px 6px rgba(89, 86, 86, 0.847); }
         p { font-size: 10px; opacity: 0.8; margin: 1px auto; color: black; text-align: center; }
         .footer-text { font-size: 10px; color: #000000; text-align: center; margin-top: 10px; opacity: 0.6; font-style: italic; }
@@ -73,7 +72,14 @@
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; color: white; flex-direction: column; }
         #loading-bar { width: 200px; height: 5px; background: #555; border-radius: 5px; margin-top: 10px; overflow: hidden; }
         #progress { width: 0%; height: 100%; background: #4CAF50; transition: 0.3s; }
-        #materi-list { color: white; margin: 15px 0; text-align: left; max-height: 50dvh; overflow-y: auto; padding-right: 5px; }
+        
+        /* CSS untuk menghilangkan scrollbar */
+        #materi-list { 
+            color: white; margin: 15px 0; text-align: left; max-height: 50dvh; overflow-y: auto; padding-right: 5px;
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        #materi-list::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
@@ -147,7 +153,7 @@
     window.checkPassword = () => {
         let pass = document.getElementById("password-input").value;
         if (pass === "1234") {
-            if (tempDelete) { remove(ref(db, 'materi/' + tempDelete.smt + '/' + tempDelete.id)); alert("Berhasil menghapus materi!"); tempDelete = null; window.closeModal(); }
+            if (tempDelete) { remove(ref(db, 'materi/' + tempDelete.smt + '/' + tempDelete.id)).then(() => { alert("Berhasil menghapus materi!"); tempDelete = null; window.closeModal(); }); }
             else { document.getElementById("password-section").style.display = "none"; document.getElementById("data-section").style.display = "block"; }
         } else { alert("Password Salah!"); }
     }
@@ -167,9 +173,11 @@
             listDiv.innerHTML = ""; const data = snapshot.val();
             if (!data) { listDiv.innerHTML = "Belum ada materi."; }
             else {
-                for (let id in data) {
-                    listDiv.innerHTML += `<div class="materi-item"><div><strong>${data[id].mk}</strong><br><small>${data[id].tgl}</small></div><div><button class="btn-lihat" onclick="window.open('${data[id].link}', '_blank')">Lihat</button><button class="btn-hapus" onclick="window.initHapus('${smt}', '${id}')">🗑️</button></div></div>`;
-                }
+                let items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                items.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+                items.forEach(item => {
+                    listDiv.innerHTML += `<div class="materi-item"><div><strong>${item.mk}</strong><br><small>${item.tgl}</small></div><div><button class="btn-lihat" onclick="window.open('${item.link}', '_blank')">Lihat</button><button class="btn-hapus" onclick="window.initHapus('${smt}', '${item.id}')">🗑️</button></div></div>`;
+                });
             }
         });
         window.openModal();
