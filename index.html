@@ -12,19 +12,27 @@
 
         /* REVISI: Mengunci layar agar tidak bisa digeser (scrolling) */
         body { 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Outfit', sans-serif; 
-            background-image: url("bg.png"); 
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat; 
-            height: 100dvh; 
-            overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-        }
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Outfit', sans-serif; 
+    background-image: url("bg.png"); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    
+    /* PENGATURAN FLEKSIBEL UNTUK IPHONE */
+    min-height: 100vh;           /* Fallback untuk browser lama */
+    height: 100dvh;              /* Tinggi dinamis untuk browser modern */
+    
+    /* Mencegah terpotong oleh bar navigasi iOS */
+    padding-bottom: env(safe-area-inset-bottom); 
+    box-sizing: border-box;
+    
+    overflow: hidden; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
         
         /* REVISI: Menggunakan dvh agar pas di layar */
         .glass-card { 
@@ -76,7 +84,7 @@
             color: white; 
             margin: 15px 0; 
             text-align: left; 
-            max-height: 50dvh; 
+            max-height: 50dvh; /* List materi tetap bisa discroll di dalam area modal */
             overflow-y: auto;  
             padding-right: 5px; 
         }
@@ -211,23 +219,16 @@
             const data = snapshot.val();
             if (!data) { listDiv.innerHTML = "Belum ada materi."; }
             else {
-                // Konversi objek menjadi array untuk bisa diurutkan
-                let dataArray = Object.keys(data).map(id => ({ id, ...data[id] }));
-                
-                // Urutkan berdasarkan tanggal (terbaru ke terlama)
-                dataArray.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
-
-                // Tampilkan data yang sudah urut
-                dataArray.forEach(item => {
+                for (let id in data) {
                     listDiv.innerHTML += `
                         <div class="materi-item">
-                            <div><strong>${item.mk}</strong><br><small>${item.tgl}</small></div>
+                            <div><strong>${data[id].mk}</strong><br><small>${data[id].tgl}</small></div>
                             <div>
-                                <button class="btn-lihat" onclick="window.open('${item.link}', '_blank')">Lihat</button>
-                                <button class="btn-hapus" onclick="window.initHapus('${smt}', '${item.id}')">🗑️</button>
+                                <button class="btn-lihat" onclick="window.open('${data[id].link}', '_blank')">Lihat</button>
+                                <button class="btn-hapus" onclick="window.initHapus('${smt}', '${id}')">🗑️</button>
                             </div>
                         </div>`;
-                });
+                }
             }
         });
         window.openModal();
