@@ -31,19 +31,21 @@
         h2 { margin-top: 0; font-size: 1.5rem; color: white; }
         .materi-item { background: rgba(255, 255, 255, 0.2); padding: 10px; margin-bottom: 8px; border-radius: 10px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; }
         .materi-text-wrap { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-right: 10px; text-align: left; }
-        .materi-item::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 10px; background: linear-gradient(to top, rgba(255,255,255,0.2), transparent); pointer-events: none; }
         .btn-lihat { background: rgba(188, 210, 39, 0.8); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
         .btn-hapus, .btn-edit { background: transparent; border: none; cursor: pointer; padding: 0; margin-left: 8px; vertical-align: middle; }
         .btn-hapus img, .btn-edit img { width: 20px; height: 20px; display: block; }
         .materi-box-display { background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 10px; text-align: left; white-space: pre-wrap; font-size: 14px; margin-top: 10px; max-height: 50vh; overflow-y: auto; color: white; scrollbar-width: none; }
-        .materi-box-display img { max-width: 100%; height: auto; border-radius: 10px; }
-        .materi-box-display::-webkit-scrollbar { display: none; }
+        .materi-box-display img { max-width: 100%; height: auto; border-radius: 15px; display: block; margin: 10px auto; }
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; justify-content: center; align-items: center; color: white; }
-        .loading-glass-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; }
+        .loading-glass-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.699)); max-width: 300px; }
         #loading-bar { width: 200px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        #progress { width: 0%; height: 100%; background: #ffffff; transition: 0.3s; }
+        #progress { width: 0%; height: 100%; background: #000000; transition: 0.3s; }
         #materi-list { color: white; margin: 15px 0; text-align: left; max-height: 50dvh; overflow-y: auto; padding-right: 5px; scrollbar-width: none; }
-        #materi-list::-webkit-scrollbar { display: none; }
+        #loading-text { color: #000000cb; font-weight: bold; margin-bottom: 10px; }
+        body.is-blur {
+    filter: blur(8px);
+    transition: filter 0.3s ease;
+}
     </style>
 </head>
 <body>
@@ -66,7 +68,7 @@
 
 <div id="loading-overlay">
     <div class="loading-glass-box">
-        <div>Memproses PDF...</div>
+        <div id="loading-text">Memproses...</div>
         <div id="loading-bar"><div id="progress"></div></div>
     </div>
 </div>
@@ -113,7 +115,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove, set, get, child } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
     const firebaseConfig = { apiKey: "AIzaSyARF88zhkjygBeRErfVkXhrkMVKZh8KTdw", authDomain: "materi-kuliah-574a7.firebaseapp.com", databaseURL: "https://materi-kuliah-574a7-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "materi-kuliah-574a7", storageBucket: "materi-kuliah-574a7.firebasestorage.app", messagingSenderId: "292121429363", appId: "1:292121429363:web:205be154df903cde35b106" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
@@ -153,20 +155,21 @@
         tempAction = null;
     }
 
-    const toggleLoading = (show) => {
+    const toggleLoading = (show, text = "Memproses PDF...") => {
         const overlay = document.getElementById("loading-overlay");
         const wrapper = document.getElementById("page-wrapper");
+        document.getElementById("loading-text").innerText = text;
         overlay.style.display = show ? "flex" : "none";
         wrapper.style.filter = show ? "blur(8px)" : "none";
+        document.getElementById("progress").style.width = show ? "100%" : "0%";
     };
 
     window.downloadMateri = async (mk, tgl, encodedIsi) => {
         const isi = decodeURIComponent(atob(encodedIsi));
-        toggleLoading(true);
+        toggleLoading(true, "Memproses PDF...");
         const { jsPDF } = window.jspdf;
         
         const tempDiv = document.createElement("div");
-        // Diubah menjadi 170mm agar ada margin kiri dan kanan
         tempDiv.style.width = "170mm"; 
         tempDiv.style.margin = "0 auto";
         tempDiv.style.padding = "20mm";
@@ -176,7 +179,10 @@
         tempDiv.style.fontSize = "12pt";
         tempDiv.style.lineHeight = "1.5";
         
-        const wrappedIsi = isi.split('\n').map(line => line.trim() ? `<div style="margin-bottom: 10px; break-inside: avoid;">${line}</div>` : '<br>').join('');
+        // CSS untuk gambar di PDF: di tengah dan rounded 15px
+        const imgStyle = "display: block; margin: 15px auto; border-radius: 15px; max-width: 100%;";
+        const processedIsi = isi.replace(/<img/g, `<img style="${imgStyle}"`);
+        const wrappedIsi = processedIsi.split('\n').map(line => line.trim() ? `<div style="margin-bottom: 10px; break-inside: avoid;">${line}</div>` : '<br>').join('');
 
         tempDiv.innerHTML = `
             <div style="text-align: center; margin-bottom: 20px; break-inside: avoid;">
@@ -188,27 +194,20 @@
         `;
         
         document.body.appendChild(tempDiv);
-
         const canvas = await html2canvas(tempDiv, { scale: 2, useCORS: true });
         const imgData = canvas.toDataURL('image/jpeg', 1.0);
-        
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgWidth = 210;
         const pageHeight = 297;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
         let heightLeft = imgHeight;
         let position = 0;
 
         while (heightLeft > 0) {
             pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
-            if (heightLeft > 0) {
-                pdf.addPage();
-                position -= pageHeight;
-            }
+            if (heightLeft > 0) { pdf.addPage(); position -= pageHeight; }
         }
-
         pdf.save(mk + ".pdf");
         document.body.removeChild(tempDiv);
         toggleLoading(false);
@@ -245,7 +244,6 @@
     }
 
     window.saveData = () => {
-        let prog = document.getElementById("progress");
         let smt = document.getElementById("semester").value;
         let id = document.getElementById("edit-id").value;
         let mk = document.getElementById("matkul").value;
@@ -253,8 +251,7 @@
         let isi = document.getElementById("materi-isi").value;
         if(!mk || !tgl || !isi) { alert("Isi semua data!"); return; }
         
-        toggleLoading(true);
-        prog.style.width = "100%";
+        toggleLoading(true, "Menyimpan...");
         const refPath = id ? ref(db, 'materi/' + smt + '/' + id) : push(ref(db, 'materi/' + smt));
         set(refPath, { mk, tgl, isi }).then(() => {
             alert("Data Berhasil Disimpan!"); 
@@ -285,35 +282,36 @@
         `;
     }
 
-    window.viewMateri = (smt) => {
+    window.viewMateri = async (smt) => {
+        toggleLoading(true, "Materi sedang dimuat, silahkan tunggu sebentar...");
         document.getElementById("password-section").style.display = "none"; 
         document.getElementById("data-section").style.display = "none"; 
         document.getElementById("materi-view").style.display = "block"; 
         document.getElementById("materi-title").innerText = "Materi Semester " + smt;
         let listDiv = document.getElementById("materi-list"); 
         listDiv.style.display = "block";
-        listDiv.innerHTML = "Memuat...";
-        onValue(ref(db, 'materi/' + smt), (snapshot) => {
-            listDiv.innerHTML = ""; 
-            const data = snapshot.val();
-            if (!data) { listDiv.innerHTML = "Belum ada materi."; }
-            else {
-                let items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-                items.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
-                items.forEach(item => {
-                    const encoded = btoa(encodeURIComponent(item.isi));
-                    listDiv.innerHTML += `
-                        <div class="materi-item">
-                            <div class="materi-text-wrap"><strong>${item.mk}</strong><br><small>${item.tgl}</small></div>
-                            <div>
-                                <button class="btn-lihat" onclick="tampilkanDetail('${item.mk}', '${item.tgl}', '${encoded}')">Lihat</button>
-                                <button class="btn-edit" onclick="initEdit('${smt}', '${item.id}', '${item.mk}', '${item.tgl}', '${encoded}')"><img src="pensil.png"></button>
-                                <button class="btn-hapus" onclick="initHapus('${smt}', '${item.id}')"><img src="sampah.png"></button>
-                            </div>
-                        </div>`;
-                });
-            }
-        });
+        
+        const snapshot = await get(child(ref(db), 'materi/' + smt));
+        listDiv.innerHTML = ""; 
+        const data = snapshot.val();
+        if (!data) { listDiv.innerHTML = "Belum ada materi."; }
+        else {
+            let items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            items.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+            items.forEach(item => {
+                const encoded = btoa(encodeURIComponent(item.isi));
+                listDiv.innerHTML += `
+                    <div class="materi-item">
+                        <div class="materi-text-wrap"><strong>${item.mk}</strong><br><small>${item.tgl}</small></div>
+                        <div>
+                            <button class="btn-lihat" onclick="tampilkanDetail('${item.mk}', '${item.tgl}', '${encoded}')">Lihat</button>
+                            <button class="btn-edit" onclick="initEdit('${smt}', '${item.id}', '${item.mk}', '${item.tgl}', '${encoded}')"><img src="pensil.png"></button>
+                            <button class="btn-hapus" onclick="initHapus('${smt}', '${item.id}')"><img src="sampah.png"></button>
+                        </div>
+                    </div>`;
+            });
+        }
+        toggleLoading(false);
         openModal();
     }
 
