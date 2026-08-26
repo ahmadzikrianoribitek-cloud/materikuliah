@@ -165,52 +165,144 @@
     };
 
     window.downloadMateri = async (mk, tgl, encodedIsi) => {
-        const isi = decodeURIComponent(atob(encodedIsi));
-        toggleLoading(true, "Memproses PDF...");
-        const { jsPDF } = window.jspdf;
-        
-        const tempDiv = document.createElement("div");
-        tempDiv.style.width = "170mm"; 
-        tempDiv.style.margin = "0 auto";
-        tempDiv.style.padding = "20mm";
-        tempDiv.style.backgroundColor = "white";
-        tempDiv.style.position = "absolute";
-        tempDiv.style.left = "-9999px";
-        tempDiv.style.fontSize = "12pt";
-        tempDiv.style.lineHeight = "1.5";
-        
-        // CSS untuk gambar di PDF: di tengah dan rounded 15px
-        const imgStyle = "display: block; margin: 15px auto; border-radius: 15px; max-width: 100%;";
-        const processedIsi = isi.replace(/<img/g, `<img style="${imgStyle}"`);
-        const wrappedIsi = processedIsi.split('\n').map(line => line.trim() ? `<div style="margin-bottom: 10px; break-inside: avoid;">${line}</div>` : '<br>').join('');
+        let tempRoot = null;
+        try {
+            const isi = decodeURIComponent(atob(encodedIsi));
+            toggleLoading(true, "Memproses PDF...");
+            const { jsPDF } = window.jspdf;
 
-        tempDiv.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px; break-inside: avoid;">
-                <h1 style="font-size: 20px; text-transform: uppercase;">${mk}</h1>
-                <p>Tanggal: ${tgl}</p>
-                <hr>
-            </div>
-            ${wrappedIsi}
-        `;
-        
-        document.body.appendChild(tempDiv);
-        const canvas = await html2canvas(tempDiv, { scale: 2, useCORS: true });
-        const imgData = canvas.toDataURL('image/jpeg', 1.0);
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const pageHeight = 297;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
+            const PDF_WIDTH = 210;
+            const PDF_HEIGHT = 297;
+            const MARGIN_X = 12;
+            const MARGIN_Y = 12;
+            const CONTENT_WIDTH = PDF_WIDTH - (MARGIN_X * 2);
+            const CONTENT_HEIGHT = PDF_HEIGHT - (MARGIN_Y * 2);
 
-        while (heightLeft > 0) {
-            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-            if (heightLeft > 0) { pdf.addPage(); position -= pageHeight; }
+            // Ambil bg.png sebagai data URL. Jika gagal, PDF tetap dibuat dengan desain warna senada.
+            let bgDataUrl = "";
+            try {
+                const response = await fetch("bg.png");
+                if (response.ok) {
+                    const blob = await response.blob();
+                    bgDataUrl = await new Promise(resolve => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => resolve("");
+                        reader.readAsDataURL(blob);
+                    });
+                }
+            } catch (e) {
+                console.warn("bg.png tidak bisa dimuat, memakai background warna.", e);
+            }
+
+            tempRoot = document.createElement("div");
+            tempRoot.style.cssText = `position:absolute;left:-10000px;top:0;width:${CONTENT_WIDTH}mm;box-sizing:border-box;`;
+            document.body.appendChild(tempRoot);
+
+            const createPage = (pageNumber) => {
+                const page = document.createElement("div");
+                page.style.cssText = `
+                    width:${CONTENT_WIDTH}mm;
+                    height:${CONTENT_HEIGHT}mm;
+                    position:relative;
+                    overflow:hidden;
+                    box-sizing:border-box;
+                    color:#151515;
+                    font-family:Arial, sans-serif;
+                    font-size:12pt;
+                    line-height:1.55;
+                    background:#f5f5ed;
+                    border:1px solid rgba(65,75,45,.22);
+                `;
+
+                if (bgDataUrl) {
+                    const bg = document.createElement("img");
+                    bg.src = bgDataUrl;
+                    bg.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.16;pointer-events:none;`;
+                    page.appendChild(bg);
+                }
+
+                const overlay = document.createElement("div");
+                overlay.style.cssText = `position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.82));pointer-events:none;`;
+                page.appendChild(overlay);
+
+                const accent = document.createElement("div");
+                accent.style.cssText = `position:absolute;top:0;left:0;right:0;height:4mm;background:linear-gradient(90deg,rgba(85,105,55,.85),rgba(180,170,95,.65),rgba(85,105,55,.85));`;
+                page.appendChild(accent);
+
+                const content = document.createElement("div");
+                content.style.cssText = `position:relative;z-index:2;height:100%;box-sizing:border-box;padding:8mm 9mm 13mm 9mm;overflow:hidden;`;
+                page.appendChild(content);
+
+                const footer = document.createElement("div");
+                footer.style.cssText = `position:absolute;z-index:3;left:9mm;right:9mm;bottom:4mm;display:flex;justify-content:space-between;border-top:1px solid rgba(65,75,45,.2);padding-top:2mm;font-size:8px;color:rgba(30,35,20,.62);letter-spacing:.5px;box-sizing:border-box;`;
+                footer.innerHTML = `<span>RINGKASAN MATERI KULIAH</span><span>HALAMAN ${pageNumber}</span>`;
+                page.appendChild(footer);
+
+                tempRoot.appendChild(page);
+                return { page, content };
+            };
+
+            let pageNumber = 1;
+            let current = createPage(pageNumber);
+
+            const header = document.createElement("div");
+            header.style.cssText = `text-align:center;margin-bottom:7mm;padding:5mm 6mm;border-radius:4mm;border:1px solid rgba(85,105,55,.22);background:rgba(255,255,255,.78);box-shadow:0 1mm 4mm rgba(0,0,0,.06);box-sizing:border-box;`;
+            header.innerHTML = `<div style="font-size:8px;letter-spacing:2px;margin-bottom:2mm;color:#667042;font-weight:bold;">MATERI PERKULIAHAN</div><h1 style="font-size:20px;line-height:1.25;margin:0 0 2mm;text-transform:uppercase;">${mk}</h1><p style="font-size:10px;margin:0;color:#555;">Tanggal: ${tgl}</p>`;
+            current.content.appendChild(header);
+
+            const rawLines = isi.split(/\r?\n/);
+            const blocks = rawLines.length ? rawLines : [isi];
+
+            for (const line of blocks) {
+                const block = document.createElement("div");
+                block.style.cssText = `margin:0 0 4mm 0;box-sizing:border-box;overflow-wrap:anywhere;`;
+                block.innerHTML = line.trim() ? line : "&nbsp;";
+
+                block.querySelectorAll("img").forEach(img => {
+                    img.style.cssText = `display:block;margin:4mm auto;max-width:100%;max-height:170mm;width:auto;height:auto;object-fit:contain;border-radius:4mm;`;
+                });
+
+                current.content.appendChild(block);
+                const images = [...block.querySelectorAll("img")];
+                await Promise.all(images.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
+                    img.onload = resolve; img.onerror = resolve;
+                })));
+
+                // Cek area content, bukan seluruh halaman yang juga berisi footer/dekorasi.
+                if (current.content.scrollHeight > current.content.clientHeight + 1 && current.content.children.length > 1) {
+                    current.content.removeChild(block);
+                    pageNumber++;
+                    current = createPage(pageNumber);
+                    current.content.appendChild(block);
+                }
+            }
+
+            const pages = [...tempRoot.children];
+            const pdf = new jsPDF("p", "mm", "a4");
+
+            for (let i = 0; i < pages.length; i++) {
+                const canvas = await html2canvas(pages[i], {
+                    scale: 2,
+                    useCORS: false,
+                    allowTaint: false,
+                    backgroundColor: "#f5f5ed",
+                    logging: false
+                });
+
+                const imgData = canvas.toDataURL("image/jpeg", 0.95);
+                if (i > 0) pdf.addPage();
+                pdf.addImage(imgData, "JPEG", MARGIN_X, MARGIN_Y, CONTENT_WIDTH, CONTENT_HEIGHT, undefined, "FAST");
+            }
+
+            pdf.save((mk || "materi") + ".pdf");
+        } catch (error) {
+            console.error("Gagal membuat PDF:", error);
+            alert("PDF gagal dibuat. Silakan coba lagi.");
+        } finally {
+            if (tempRoot && tempRoot.parentNode) tempRoot.parentNode.removeChild(tempRoot);
+            toggleLoading(false);
         }
-        pdf.save(mk + ".pdf");
-        document.body.removeChild(tempDiv);
-        toggleLoading(false);
     }
 
     window.tutupDetail = () => {
