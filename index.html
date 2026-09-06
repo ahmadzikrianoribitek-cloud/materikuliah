@@ -54,6 +54,34 @@
     filter: blur(8px);
     transition: filter 0.3s ease;
 }
+
+        /* ===== Penyesuaian tampilan layar lebar (desktop/tablet) ===== */
+        /* Tampilan HP (di bawah 768px) tidak disentuh sama sekali. */
+        @media (min-width: 768px) {
+            .glass-card { max-width: 600px; }
+            .semester-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 16px; }
+            .modal-content { max-width: 560px; }
+        }
+        @media (min-width: 1100px) {
+            .glass-card { max-width: 950px; }
+            .semester-list { grid-template-columns: repeat(4, 1fr); gap: 18px 22px; }
+            .semester-list li { padding: 22px; font-size: 17px; }
+            h1 { font-size: 30px; }
+            p { font-size: 13px; }
+            .logo { width: 130px; margin-bottom: 26px; }
+            .footer-text { font-size: 12px; margin-top: 22px; }
+            .modal-content { max-width: 700px; padding: 40px; }
+            .materi-item { padding: 14px 16px; font-size: 14px; }
+            .materi-box-display { font-size: 16px; }
+        }
+        @media (min-width: 1500px) {
+            .glass-card { max-width: 1150px; }
+            .semester-list li { padding: 26px; font-size: 18px; }
+            h1 { font-size: 36px; }
+            p { font-size: 14px; }
+            .logo { width: 150px; }
+            .modal-content { max-width: 780px; }
+        }
     </style>
 </head>
 <body>
