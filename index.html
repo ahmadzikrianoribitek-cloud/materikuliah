@@ -160,6 +160,7 @@
         document.getElementById("materi-title").style.display = "block";
         document.getElementById("container-btn-tutup").style.display = "flex"; 
         document.getElementById("password-input").value = ""; 
+        currentSharedMaterial = null;
         tempAction = null;
     }
 
@@ -364,8 +365,11 @@
         });
     }
 
-    window.tampilkanDetail = (mk, tgl, encodedIsi) => {
+    window.tampilkanDetail = (mk, tgl, encodedIsi, smt = null, id = null) => {
         const isi = decodeURIComponent(atob(encodedIsi));
+        if (smt && id) {
+            currentSharedMaterial = { smt, id, mk, tgl, isi };
+        }
         document.getElementById("materi-title").style.display = "none";
         document.getElementById("materi-list").style.display = "none";
         document.getElementById("container-btn-tutup").style.display = "none";
@@ -375,11 +379,101 @@
             <h2 style="font-size: 1.5rem; margin-top: -10px; margin-bottom:5px;">${mk}</h2>
             <p style="font-size: 0.9rem; margin-bottom: 15px; color: #ccc;">${tgl}</p>
             <div class="materi-box-display">${isi}</div>
-            <div class="button-group">
+            <div class="button-group" style="flex-wrap:wrap;">
                 <button class="btn btn-batal" onclick="tutupDetail()">Tutup</button>
+                <button class="btn btn-unduh" onclick="bagikanMateri()">Bagikan</button>
                 <button class="btn btn-unduh" onclick="downloadMateri('${mk}', '${tgl}', '${encodedIsi}')">Unduh PDF</button>
             </div>
         `;
+    }
+
+
+    // ============================================================
+    // SISTEM LINK MATERI INDIVIDUAL - TANPA REPOSITORY BARU
+    // Contoh:
+    // .../materikuliah/?semester=3&materi=ID_MATERI
+    // ============================================================
+    let currentSharedMaterial = null;
+
+    function buatLinkMateri(smt, id) {
+        const url = new URL(window.location.href);
+        url.search = "";
+        url.hash = "";
+        url.searchParams.set("semester", smt);
+        url.searchParams.set("materi", id);
+        return url.toString();
+    }
+
+    window.bagikanMateri = async () => {
+        if (!currentSharedMaterial) return;
+
+        const link = buatLinkMateri(
+            currentSharedMaterial.smt,
+            currentSharedMaterial.id
+        );
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: currentSharedMaterial.mk,
+                    text: "Materi kuliah: " + currentSharedMaterial.mk,
+                    url: link
+                });
+            } else if (navigator.clipboard) {
+                await navigator.clipboard.writeText(link);
+                alert("Link materi berhasil disalin!");
+            } else {
+                prompt("Salin link materi ini:", link);
+            }
+        } catch (error) {
+            // User menutup dialog share tidak perlu diberi error.
+            if (error && error.name !== "AbortError") {
+                alert("Link materi: " + link);
+            }
+        }
+    };
+
+    async function bukaMateriDariURL() {
+        const params = new URLSearchParams(window.location.search);
+        const smt = params.get("semester");
+        const materiId = params.get("materi");
+
+        if (!smt || !materiId) return;
+
+        // Tunggu Firebase siap lalu ambil materi tertentu.
+        try {
+            toggleLoading(true, "Membuka materi...");
+            const snapshot = await get(child(ref(db), 'materi/' + smt + '/' + materiId));
+            const item = snapshot.val();
+
+            if (!item) {
+                toggleLoading(false);
+                alert("Materi yang dibagikan tidak ditemukan atau sudah dihapus.");
+                return;
+            }
+
+            document.getElementById("password-section").style.display = "none";
+            document.getElementById("data-section").style.display = "none";
+            document.getElementById("materi-view").style.display = "block";
+            document.getElementById("materi-title").innerText = item.mk;
+
+            const encoded = btoa(encodeURIComponent(item.isi));
+            currentSharedMaterial = {
+                smt: smt,
+                id: materiId,
+                mk: item.mk,
+                tgl: item.tgl,
+                isi: item.isi
+            };
+
+            tampilkanDetail(item.mk, item.tgl, encoded);
+            toggleLoading(false);
+            openModal();
+        } catch (error) {
+            console.error("Gagal membuka link materi:", error);
+            toggleLoading(false);
+            alert("Materi gagal dimuat. Silakan coba lagi.");
+        }
     }
 
     window.viewMateri = async (smt) => {
@@ -404,7 +498,7 @@
                     <div class="materi-item">
                         <div class="materi-text-wrap"><strong>${item.mk}</strong><br><small>${item.tgl}</small></div>
                         <div>
-                            <button class="btn-lihat" onclick="tampilkanDetail('${item.mk}', '${item.tgl}', '${encoded}')">Lihat</button>
+                            <button class="btn-lihat" onclick="tampilkanDetail('${item.mk}', '${item.tgl}', '${encoded}', '${smt}', '${item.id}')">Lihat</button>
                             <button class="btn-edit" onclick="initEdit('${smt}', '${item.id}', '${item.mk}', '${item.tgl}', '${encoded}')"><img src="pensil.png"></button>
                             <button class="btn-hapus" onclick="initHapus('${smt}', '${item.id}')"><img src="sampah.png"></button>
                         </div>
@@ -428,6 +522,11 @@
         openModal(); 
     }
     window.pilihSemester = (event) => { if (event.target.tagName === 'LI') window.viewMateri(event.target.getAttribute('data-smt')); }
+
+    // Jika URL memiliki ?semester=...&materi=..., langsung buka materi tersebut.
+    window.addEventListener("DOMContentLoaded", () => {
+        bukaMateriDariURL();
+    });
 </script>
 </body>
 </html>
