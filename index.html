@@ -27,29 +27,29 @@
         .semester-list li:hover { background: rgba(255, 255, 255, 0.018); transform: scale(1.02); }
         .icon-gembok { position: absolute; top: 0; right: 0; font-size: 24px; cursor: pointer; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px); z-index: 9998; }
-        .modal-content { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(35px); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto; text-align: center; color: white; box-sizing: border-box; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.500)); border: 1px solid rgba(160, 160, 76, 0.108); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(10px); z-index: 9998; }
+        .modal-content { background: rgba(18, 20, 14, 0.82); backdrop-filter: blur(35px); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto; text-align: center; color: white; box-sizing: border-box; filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.55)); border: 1px solid rgba(255, 255, 255, 0.14); }
         #password-input { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 10px; color: white; width: 80%; margin-bottom: 15px; }
         .button-group { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
         .btn { padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
-        .btn-buka { background: rgba(76, 175, 80, 0.6); color: white; }
-        .btn-batal { background: rgba(244, 67, 54, 0.6); color: white; }
-        .btn-unduh { background: rgba(76, 175, 80, 0.8); color: white; }
+        .btn-buka { background: rgba(76, 175, 80, 0.85); color: white; }
+        .btn-batal { background: rgba(244, 67, 54, 0.85); color: white; }
+        .btn-unduh { background: rgba(76, 175, 80, 0.9); color: white; }
         #data-section input, #data-section select, #data-section textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.1); color: whitesmoke; box-sizing: border-box; -webkit-appearance: none; -moz-appearance: none; appearance: none; font-family: inherit; display: block; }
         h2 { margin-top: 0; font-size: 1.5rem; color: white; }
-        .materi-item { background: rgba(255, 255, 255, 0.2); padding: 10px; margin-bottom: 8px; border-radius: 10px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; }
+        .materi-item { background: rgba(255, 255, 255, 0.1); padding: 10px; margin-bottom: 8px; border-radius: 10px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.12); }
         .materi-text-wrap { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-right: 10px; text-align: left; }
-        .btn-lihat { background: rgba(188, 210, 39, 0.8); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
+        .btn-lihat { background: rgba(188, 210, 39, 0.9); color: #1a1d10; font-weight: bold; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
         .btn-hapus, .btn-edit { background: transparent; border: none; cursor: pointer; padding: 0; margin-left: 8px; vertical-align: middle; }
         .btn-hapus img, .btn-edit img { width: 20px; height: 20px; display: block; }
-        .materi-box-display { background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 10px; text-align: left; white-space: pre-wrap; font-size: 14px; margin-top: 10px; max-height: 50vh; overflow-y: auto; color: white; scrollbar-width: none; }
+        .materi-box-display { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; text-align: left; white-space: pre-wrap; font-size: 14px; line-height: 1.6; margin-top: 10px; max-height: 50vh; overflow-y: auto; color: #f5f5f0; border: 1px solid rgba(255, 255, 255, 0.12); scrollbar-width: none; }
         .materi-box-display img { max-width: 100%; height: auto; border-radius: 15px; display: block; margin: 10px auto; }
-        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; justify-content: center; align-items: center; color: white; }
-        .loading-glass-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.699)); max-width: 300px; }
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; justify-content: center; align-items: center; color: white; background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(6px); }
+        .loading-glass-box { background: rgba(18, 20, 14, 0.8); backdrop-filter: blur(20px); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.16); text-align: center; filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.699)); max-width: 300px; }
         #loading-bar { width: 200px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        #progress { width: 0%; height: 100%; background: #000000; transition: 0.3s; }
+        #progress { width: 0%; height: 100%; background: #bcd227; transition: 0.3s; }
         #materi-list { color: white; margin: 15px 0; text-align: left; max-height: 50dvh; overflow-y: auto; padding-right: 5px; scrollbar-width: none; }
-        #loading-text { color: #000000cb; font-weight: bold; margin-bottom: 10px; }
+        #loading-text { color: #ffffff; font-weight: bold; margin-bottom: 10px; }
         body.is-blur {
     filter: blur(8px);
     transition: filter 0.3s ease;
@@ -215,28 +215,39 @@
             const CONTENT_WIDTH = PDF_WIDTH - (MARGIN_X * 2);
             const CONTENT_HEIGHT = PDF_HEIGHT - (MARGIN_Y * 2);
 
-            // Ambil bg.png sebagai data URL. Jika gagal, PDF tetap dibuat dengan desain warna senada.
-            let bgDataUrl = "";
-            try {
-                const response = await fetch("bg.png");
-                if (response.ok) {
+            // Ambil bg.png dan logo sebagai data URL. Jika gagal, PDF tetap dibuat dengan desain warna senada.
+            const fetchAsDataUrl = async (path) => {
+                try {
+                    const response = await fetch(path);
+                    if (!response.ok) return "";
                     const blob = await response.blob();
-                    bgDataUrl = await new Promise(resolve => {
+                    return await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onload = () => resolve(reader.result);
                         reader.onerror = () => resolve("");
                         reader.readAsDataURL(blob);
                     });
+                } catch (e) {
+                    return "";
                 }
-            } catch (e) {
-                console.warn("bg.png tidak bisa dimuat, memakai background warna.", e);
-            }
+            };
+
+            const [bgDataUrl, logoDataUrl] = await Promise.all([
+                fetchAsDataUrl("bg.png"),
+                fetchAsDataUrl("logo ibitek.png")
+            ]);
+
+            // Palet warna diambil dari identitas logo (hijau tua & emas).
+            const HIJAU_TUA = "#3f4d2a";
+            const HIJAU = "#55692f";
+            const EMAS = "#b99a3f";
+            const KREM = "#faf8f0";
 
             tempRoot = document.createElement("div");
             tempRoot.style.cssText = `position:absolute;left:-10000px;top:0;width:${CONTENT_WIDTH}mm;box-sizing:border-box;`;
             document.body.appendChild(tempRoot);
 
-            const createPage = (pageNumber) => {
+            const createPage = (pageNumber, isFirst) => {
                 const page = document.createElement("div");
                 page.style.cssText = `
                     width:${CONTENT_WIDTH}mm;
@@ -244,36 +255,55 @@
                     position:relative;
                     overflow:hidden;
                     box-sizing:border-box;
-                    color:#151515;
-                    font-family:Arial, sans-serif;
-                    font-size:12pt;
-                    line-height:1.55;
-                    background:#f5f5ed;
-                    border:1px solid rgba(65,75,45,.22);
+                    color:#232318;
+                    font-family:'Outfit', Arial, sans-serif;
+                    font-size:11.5pt;
+                    line-height:1.65;
+                    background:${KREM};
                 `;
 
                 if (bgDataUrl) {
                     const bg = document.createElement("img");
                     bg.src = bgDataUrl;
-                    bg.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.16;pointer-events:none;`;
+                    bg.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.09;pointer-events:none;`;
                     page.appendChild(bg);
                 }
 
                 const overlay = document.createElement("div");
-                overlay.style.cssText = `position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.82));pointer-events:none;`;
+                overlay.style.cssText = `position:absolute;inset:0;background:linear-gradient(160deg,rgba(250,248,240,.96),rgba(250,248,240,.88));pointer-events:none;`;
                 page.appendChild(overlay);
 
+                // Bilah aksen atas bergradasi hijau - emas - hijau.
                 const accent = document.createElement("div");
-                accent.style.cssText = `position:absolute;top:0;left:0;right:0;height:4mm;background:linear-gradient(90deg,rgba(85,105,55,.85),rgba(180,170,95,.65),rgba(85,105,55,.85));`;
+                accent.style.cssText = `position:absolute;top:0;left:0;right:0;height:3mm;background:linear-gradient(90deg,${HIJAU_TUA},${EMAS} 50%,${HIJAU_TUA});`;
                 page.appendChild(accent);
 
+                // Watermark logo transparan di pojok kanan bawah, hanya dekorasi.
+                if (logoDataUrl) {
+                    const wm = document.createElement("img");
+                    wm.src = logoDataUrl;
+                    wm.style.cssText = `position:absolute;right:-14mm;bottom:-14mm;width:70mm;height:70mm;opacity:.05;pointer-events:none;`;
+                    page.appendChild(wm);
+                }
+
                 const content = document.createElement("div");
-                content.style.cssText = `position:relative;z-index:2;height:100%;box-sizing:border-box;padding:8mm 9mm 13mm 9mm;overflow:hidden;`;
+                content.style.cssText = `position:relative;z-index:2;height:100%;box-sizing:border-box;padding:${isFirst ? "8mm" : "16mm"} 10mm 14mm 10mm;overflow:hidden;`;
                 page.appendChild(content);
 
+                // Header ramping untuk halaman lanjutan (bukan halaman pertama).
+                if (!isFirst) {
+                    const runningHeader = document.createElement("div");
+                    runningHeader.style.cssText = `position:absolute;z-index:3;left:10mm;right:10mm;top:5mm;display:flex;justify-content:space-between;align-items:baseline;border-bottom:.4mm solid ${EMAS};padding-bottom:1.6mm;box-sizing:border-box;`;
+                    runningHeader.innerHTML = `
+                        <span style="font-size:9px;font-weight:700;letter-spacing:.6px;color:${HIJAU_TUA};text-transform:uppercase;">${mk}</span>
+                        <span style="font-size:8px;color:${HIJAU};letter-spacing:.4px;">RINGKASAN MATERI KULIAH</span>
+                    `;
+                    page.appendChild(runningHeader);
+                }
+
                 const footer = document.createElement("div");
-                footer.style.cssText = `position:absolute;z-index:3;left:9mm;right:9mm;bottom:4mm;display:flex;justify-content:space-between;border-top:1px solid rgba(65,75,45,.2);padding-top:2mm;font-size:8px;color:rgba(30,35,20,.62);letter-spacing:.5px;box-sizing:border-box;`;
-                footer.innerHTML = `<span>RINGKASAN MATERI KULIAH</span><span>HALAMAN ${pageNumber}</span>`;
+                footer.style.cssText = `position:absolute;z-index:3;left:10mm;right:10mm;bottom:5mm;display:flex;justify-content:space-between;align-items:center;border-top:.3mm solid rgba(63,77,42,.28);padding-top:2.2mm;font-size:8px;color:rgba(35,35,24,.6);letter-spacing:.4px;box-sizing:border-box;`;
+                footer.innerHTML = `<span>Institut Bisnis dan Teknologi Kalimantan Banjarmasin</span><span class="pdf-page-label">Halaman ${pageNumber}</span>`;
                 page.appendChild(footer);
 
                 tempRoot.appendChild(page);
@@ -281,23 +311,38 @@
             };
 
             let pageNumber = 1;
-            let current = createPage(pageNumber);
+            let current = createPage(pageNumber, true);
 
             const header = document.createElement("div");
-            header.style.cssText = `text-align:center;margin-bottom:7mm;padding:5mm 6mm;border-radius:4mm;border:1px solid rgba(85,105,55,.22);background:rgba(255,255,255,.78);box-shadow:0 1mm 4mm rgba(0,0,0,.06);box-sizing:border-box;`;
-            header.innerHTML = `<div style="font-size:8px;letter-spacing:2px;margin-bottom:2mm;color:#667042;font-weight:bold;">MATERI PERKULIAHAN</div><h1 style="font-size:20px;line-height:1.25;margin:0 0 2mm;text-transform:uppercase;">${mk}</h1><p style="font-size:10px;margin:0;color:#555;">Tanggal: ${tgl}</p>`;
+            header.style.cssText = `text-align:center;margin-bottom:8mm;padding:6mm 7mm;border-radius:3mm;border:.4mm solid ${EMAS};background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.75));box-shadow:0 1.5mm 5mm rgba(63,77,42,.12);box-sizing:border-box;`;
+            header.innerHTML = `
+                ${logoDataUrl ? `<img src="${logoDataUrl}" style="width:20mm;height:20mm;object-fit:contain;display:block;margin:0 auto 3mm auto;">` : ""}
+                <div style="font-size:8px;letter-spacing:2.5px;margin-bottom:2.5mm;color:${EMAS};font-weight:700;">MATERI PERKULIAHAN</div>
+                <h1 style="font-size:19px;line-height:1.3;margin:0 0 2.5mm;text-transform:uppercase;color:${HIJAU_TUA};font-weight:900;letter-spacing:.3px;">${mk}</h1>
+                <div style="width:14mm;height:.5mm;background:${EMAS};margin:0 auto 3mm auto;"></div>
+                <p style="font-size:9.5px;margin:0;color:#5a5a4a;letter-spacing:.4px;">Tanggal&nbsp;: ${tgl}</p>
+            `;
             current.content.appendChild(header);
 
             const rawLines = isi.split(/\r?\n/);
             const blocks = rawLines.length ? rawLines : [isi];
 
             for (const line of blocks) {
+                const trimmed = line.trim();
+                const isDosenLine = /^dosen\s*:/i.test(trimmed);
+
                 const block = document.createElement("div");
-                block.style.cssText = `margin:0 0 4mm 0;box-sizing:border-box;overflow-wrap:anywhere;`;
-                block.innerHTML = line.trim() ? line : "&nbsp;";
+                if (isDosenLine) {
+                    // Baris nama dosen ditonjolkan dalam kotak highlight.
+                    block.style.cssText = `margin:0 0 5mm 0;box-sizing:border-box;overflow-wrap:anywhere;padding:3mm 4mm;border-left:1mm solid ${EMAS};background:rgba(185,154,63,.09);border-radius:1.2mm;font-weight:700;color:${HIJAU_TUA};font-size:11pt;`;
+                    block.innerHTML = trimmed || "&nbsp;";
+                } else {
+                    block.style.cssText = `margin:0 0 4.5mm 0;box-sizing:border-box;overflow-wrap:anywhere;text-align:justify;`;
+                    block.innerHTML = trimmed ? line : "&nbsp;";
+                }
 
                 block.querySelectorAll("img").forEach(img => {
-                    img.style.cssText = `display:block;margin:4mm auto;max-width:100%;max-height:170mm;width:auto;height:auto;object-fit:contain;border-radius:4mm;`;
+                    img.style.cssText = `display:block;margin:4mm auto;max-width:100%;max-height:170mm;width:auto;height:auto;object-fit:contain;border-radius:3mm;box-shadow:0 1.5mm 5mm rgba(0,0,0,.15);`;
                 });
 
                 current.content.appendChild(block);
@@ -310,12 +355,19 @@
                 if (current.content.scrollHeight > current.content.clientHeight + 1 && current.content.children.length > 1) {
                     current.content.removeChild(block);
                     pageNumber++;
-                    current = createPage(pageNumber);
+                    current = createPage(pageNumber, false);
                     current.content.appendChild(block);
                 }
             }
 
             const pages = [...tempRoot.children];
+
+            // Sekarang total halaman sudah diketahui, perbarui label "Halaman X dari Y".
+            pages.forEach((p, idx) => {
+                const label = p.querySelector(".pdf-page-label");
+                if (label) label.textContent = `Halaman ${idx + 1} dari ${pages.length}`;
+            });
+
             const pdf = new jsPDF("p", "mm", "a4");
 
             for (let i = 0; i < pages.length; i++) {
@@ -323,7 +375,7 @@
                     scale: 2,
                     useCORS: false,
                     allowTaint: false,
-                    backgroundColor: "#f5f5ed",
+                    backgroundColor: "#faf8f0",
                     logging: false
                 });
 
